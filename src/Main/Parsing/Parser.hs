@@ -24,7 +24,6 @@ newtype Parser lex a = Parser { unParser :: StateT [lex] Maybe a }
 runParser :: Parser lex a -> [lex] -> Maybe ([lex], a)
 runParser (Parser p) ls = swap <$> runStateT p ls
 
--- Если парсер p не поглащает весь список, то parse возвращает Nothing.
 parse :: Parser lex a -> [lex] -> Maybe a
 parse p ls = do
   (ls', a) <- runParser p ls
@@ -32,8 +31,6 @@ parse p ls = do
     [] -> pure a
     _  -> Nothing
 
--- satisfy p принимает лексему l, если она удовлетворяет предикату p, иначе
--- завершается с неуспехом.
 satisfy :: (lex -> Bool) -> Parser lex lex
 satisfy p =
   Parser $ do
@@ -42,7 +39,6 @@ satisfy p =
       then put ls' >> pure l
       else lift Nothing
 
--- eof завершается с успехом если мы достигли конца строки.
 eof :: Parser lex ()
 eof =
   Parser $ do
